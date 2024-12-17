@@ -4,61 +4,70 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Voice-Reactive Pepsi Logo</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<script>
-let mic; // Microphone input
-let waveSpeed = 0.05; // Wave animation speed
+  <!-- Accessibility Fix -->
+  <h1 id="logoTitle" style="text-align: center; margin-top: 20px;">
+    Voice-Reactive Pepsi Logo
+  </h1>
+  <div aria-labelledby="logoTitle"></div>
 
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  mic = new p5.AudioIn();
-  mic.start(); // Start the microphone input
-  noStroke();
-}
+  <script>
+    let mic; // Microphone input
+    let waveSpeed = 0.05; // Wave animation speed
 
-function draw() {
-  background(255); // White background
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      mic = new p5.AudioIn();
+      mic.start(); // Start microphone input
+      noStroke();
+    }
 
-  let vol = mic.getLevel(); // Get the microphone volume
-  let waveHeight = map(vol, 0, 1, 10, 150); // Map voice volume to wave height
+    function draw() {
+      background(255); // White background
 
-  let logoSize = min(width, height) * 0.5; // Responsive logo size
+      let vol = mic.getLevel(); // Get the microphone volume
+      let waveHeight = map(vol, 0, 1, 10, 150); // Map voice volume to wave height
 
-  // Simulated Pepsi logo
-  drawPepsiLogo(width / 2, height / 2, logoSize, waveHeight);
-}
+      let logoSize = min(width, height) * 0.5; // Responsive logo size
+      drawPepsiLogo(width / 2, height / 2, logoSize, waveHeight);
+    }
 
-function drawPepsiLogo(x, y, size, waveHeight) {
-  let radius = size / 2;
+    function drawPepsiLogo(x, y, size, waveHeight) {
+      let radius = size / 2;
 
-  // Red Wave - Top Half
-  fill(230, 0, 0);
-  beginShape();
-  for (let i = -radius; i <= radius; i += 5) {
-    let yOffset = sin((i * 0.05) + frameCount * waveSpeed) * waveHeight;
-    vertex(x + i, y - yOffset - (radius / 2));
-  }
-  vertex(x + radius, y);
-  vertex(x - radius, y);
-  endShape(CLOSE);
+      // Draw Red Wave (Top Half)
+      fill(230, 0, 0);
+      beginShape();
+      for (let i = -radius; i <= radius; i += 5) {
+        let yOffset = sin((i * 0.05) + frameCount * waveSpeed) * waveHeight;
+        vertex(x + i, y - radius / 2 - yOffset);
+      }
+      vertex(x + radius, y);
+      vertex(x - radius, y);
+      endShape(CLOSE);
 
-  // White Separator
-  fill(255);
-  rect(x - radius, y - 10, size, 20); // White bar across the middle
+      // White Separator
+      fill(255);
+      rect(x - radius, y - 10, size, 20); // Center white bar
 
-  // Blue Wave - Bottom Half
-  fill(0, 0, 230);
-  beginShape();
-  for (let i = -radius; i <= radius; i += 5) {
-    let yOffset = sin((i * 0.05) + frameCount * waveSpeed) * waveHeight;
-    vertex(x + i, y + yOffset + (radius / 2));
-  }
-  vertex(x + radius, y);
-  vertex(x - radius, y);
-  endShape(CLOSE);
-}
-</script>
+      // Draw Blue Wave (Bottom Half)
+      fill(0, 0, 230);
+      beginShape();
+      for (let i = -radius; i <= radius; i += 5) {
+        let yOffset = sin((i * 0.05) + frameCount * waveSpeed) * waveHeight;
+        vertex(x + i, y + radius / 2 + yOffset);
+      }
+      vertex(x + radius, y);
+      vertex(x - radius, y);
+      endShape(CLOSE);
+    }
+
+    // Handle window resize
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+    }
+  </script>
 </body>
 </html>
